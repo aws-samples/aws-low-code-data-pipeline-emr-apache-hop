@@ -1,0 +1,71 @@
+{
+  "name": "hoptemplate",
+   "jobTemplateData":
+  {
+    "executionRoleArn": "${executionRoleArn}",
+    "releaseLabel": "${emrReleaseLabel}",
+    "jobDriver": {
+      "sparkSubmitJobDriver": {
+        "entryPoint": "s3://${s3DataBucket}/fatjar.jar",
+        "entryPointArguments":["s3://${s3DataBucket}${beamPipeline}","s3://${s3DataBucket}/metadata.json","SparkEMR"],
+        "sparkSubmitParameters": "--class org.apache.hop.beam.run.MainBeam"
+      }
+    },    
+    "configurationOverrides":{
+      "applicationConfiguration": [
+          {
+              "classification": "spark-defaults",
+              "properties": {
+                  "spark.kubernetes.node.selector.topology.kubernetes.io/zone":"${az}",
+                  "spark.kubernetes.executor.podNamePrefix":"beamspark",
+                  "spark.driver.memory": "2G",
+                  "spark.sql.catalogImplementation": "hive",
+                  "spark.dynamicAllocation.maxExecutors": "50",
+                  "spark.dynamicAllocation.shuffleTracking.enabled": "true",
+                  "spark.dynamicAllocation.shuffleTracking.timeout": "300s",
+                  "spark.kubernetes.driver.request.cores": "0.5",
+                  "spark.kubernetes.allocation.batch.size": "2",
+                  "spark.hadoop.hive.metastore.client.factory.class": "com.amazonaws.glue.catalog.metastore.AWSGlueDataCatalogHiveClientFactory",
+                  "spark.dynamicAllocation.minExecutors": "0",
+                  "spark.kubernetes.driver.node.selector.spark-role": "driver",
+                  "spark.kubernetes.executor.node.selector.spark-role": "executor",
+                  "spark.kubernetes.driver.node.selector.node-lifecycle": "on-demand",
+                  "spark.kubernetes.executor.node.selector.node-lifecycle": "spot",
+                  "spark.kubernetes.container.image":"${containerImage}",
+                  "spark.dynamicAllocation.enabled": "true",
+                  "spark.dynamicAllocation.executorAllocationRatio": "1"
+              }
+          }
+      ],
+      "monitoringConfiguration": {
+          "persistentAppUI": "ENABLED",
+          "cloudWatchMonitoringConfiguration": {
+              "logGroupName": "/aws/emr-containers/jobs",
+              "logStreamNamePrefix": "hop"
+          }
+      }
+    },
+    "parameterConfiguration": {
+      "executionRoleArn": {
+          "type": "STRING"
+      },
+      "emrReleaseLabel": {
+          "type": "STRING"
+      },
+      "s3DataBucket": {
+          "type": "STRING"
+      },
+      "containerImage": {
+          "type": "STRING"
+      },
+      "az": {
+          "type": "STRING"
+      },
+      "beamPipeline":{
+        "type": "STRING",
+        "defaultValue":"/beam/pipelines/complex.hpl"
+      }
+    }
+  }
+
+}
