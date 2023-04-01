@@ -7,8 +7,8 @@ FROM ${ECR_ACCOUNT}.dkr.ecr.${ECR_REGION}.amazonaws.com/${CONTAINER_TYPE}/${CONT
 USER root
 RUN amazon-linux-extras install java-openjdk11
 RUN yum install -y java-11-openjdk-devel
-RUN update-alternatives --set java /usr/lib/jvm/java-11-openjdk-11.0.16.0.8-1.amzn2.0.1.x86_64/bin/java
-RUN update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-11.0.16.0.8-1.amzn2.0.1.x86_64/bin/javac
+RUN update-alternatives --set java /usr/lib/jvm/java-11-openjdk-$(yum list | grep "java-11-openjdk.x86_64" | awk '{ print substr($2,3) }').x86_64/bin/java
+RUN update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-$(yum list | grep "java-11-openjdk.x86_64" | awk '{ print substr($2,3) }').x86_64/bin/javac
 ENV JAVA_HOME /etc/alternatives/java_sdk_11_openjdk
 RUN export JAVA_HOME
 USER hadoop:hadoop

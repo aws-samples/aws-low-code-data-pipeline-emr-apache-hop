@@ -1,18 +1,13 @@
 ## Low Code Data pipelines on EMR using Apache Hop
 
-Customers are often struggling with complexity of modern data processing frameworks such as Apache Spark or Flink. AWS-native low-code solutions GlueStudio or Glue DataBrew are able to cover some of the use-cases but they support small number of connectors. It is also a cumbersome and complicated process to do local development with AWS-native tools. The idea is to a blog post for Apache Hop - a data integration tool, supporting the local development and debugging and running the pipelines on AWS managed Spark (EMR, EMR on EKS, EMR Serverless) and Flink(EMR) services. Apache Hop can also be used for batched and streaming ETL workloads and can facilitate the data migration from other cloud providers because of built-in connectors for GCP and Azure.
-
-## Security
-
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
-
-## License
-
-This library is licensed under the MIT-0 License. See the LICENSE file.
+Apache Hop is a data orchestration and data engineering platform that allows you to create data pipelines visually and run them either using native Hop execution engine 
+or export them as Apache Beam pipelines.
+There're several options to run Apache Beam pipelines on AWS platform using either Apache Spark or Apache Flink. This quickstart provides CDK deployment to provision EMR on EKS cluster 
+with custom Java11 docker image to run the latest version of Hop. 
 
 ## Installation
 
-We recommend using cloud9 instance to install the project.
+We highly recommend spinning up AWS Cloud9 instance to deploy the pipeline as it already has docker and the necessary CDK libraries installed. 
 
 
 1. Switch to `deployment/cdk` folder. 
@@ -34,7 +29,7 @@ as a master role in EKS.
 3. [Important] You need to generate `fatjar.jar` and upload it to `hop` folder. You can either install the standalone Hop GUI client and follow the instructions here https://hop.apache.org/manual/2.2.0/pipeline/beam/running-the-beam-samples.html. Alternatively you can use hop web docker image as below
 
 ```
-docker run --name hop_latest -d -p 8080:8080  apache/hop-web:2.2.0-beam
+docker run --name hop_latest -d -p 8080:8080 apache/hop-web:2.4.0-SNAPSHOT-beam
 
 ```
 Once container is started you can copy the fatjar into `hop` folder in the project like this (assuming your current folder is `development/cdk` )
@@ -55,15 +50,23 @@ $ bash ./deployment.sh <ACCOUNT_ID> <REGION>
 4. During deployment the following resources will be provisioned 
     - EKS Cluster
     - EMR Virtual Cluster
-    - S3 Bucket with Hop beam samples and `metadata.json` and `fatjar.jar` uploaded so then can be used to run pipeline. 
+    - S3 Bucket with Hop beam samples, `metadata.json` and `fatjar.jar` uploaded so then can be used to run pipeline. 
     - Relevant IAM roles and permissions
-    - EMR Job Run Template with `/beam/pipelines/complex.tpl` as default pipeline to run. 
+    - EMR on EKS Job Run Template with `/beam/pipelines/complex.tpl` as default pipeline to run. 
 
-5. Open Cloudformation, select `hop-EmrEksStack` and switch to the `Outputs` tab. `hopapachehopdemosubmitJobTemplate` parameter contains AWS CLI command which you can copy and run using AWS Cloudshell or Cloud9 terminal. You can choose what pipeline to run by setting `beamPipeline` parameter as below:
+5. Open Cloudformation service page, select `hop-EmrEksStack` and switch to the `Outputs` tab. `hopapachehopdemosubmitJobTemplate` parameter contains AWS CLI command which you can copy and run using AWS Cloudshell or Cloud9 terminal. You can choose what pipeline to run by setting `beamPipeline` parameter as below:
 
 ```
 aws emr-containers start-job-run --virtual-cluster-id=<POPULATED_BY_CFN> --job-template-id=<POPULATED_BY_CFN> --job-template-parameters '{"executionRoleArn":"<POPULATED_BY_CFN>","emrReleaseLabel":"<POPULATED_BY_CFN>","s3DataBucket":"<POPULATED_BY_CFN>",containerImage":"<POPULATED_BY_CFN>", "beamPipeline":"/beam/pipelines/input-process-output.tpl", "az":"<REGION>a"}'
 
 ``` 
 
- 
+6. To monitor your jobs open EMR service page, then go to EMR on EKS Virtual clusters and select your cluster to view the spark jobs and get access to the SparkUI 
+
+## Security
+
+See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+
+## License
+
+This library is licensed under the MIT-0 License. See the LICENSE file.
