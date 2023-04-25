@@ -23,16 +23,7 @@
     "job-config": [
       {
         "workload-name": "apache-hop-demo",
-        "emr-version": "emr-6.10.0-latest",
-        "docker-file": "Dockerfile",
-        "spark-driver-instance-types": [
-          "m5.xlarge",
-          "c5.xlarge"
-        ],
-        "spark-executor-instance-types": [
-          "m5.4xlarge",
-          "c5.4xlarge"
-        ],
+        "emr-version": "emr-6.10.0-java11-latest",
         "iam-policy": ""
       }
     ]

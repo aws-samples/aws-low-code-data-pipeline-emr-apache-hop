@@ -31,7 +31,6 @@
                   "spark.kubernetes.executor.node.selector.spark-role": "executor",
                   "spark.kubernetes.driver.node.selector.node-lifecycle": "on-demand",
                   "spark.kubernetes.executor.node.selector.node-lifecycle": "spot",
-                  "spark.kubernetes.container.image":"${containerImage}",
                   "spark.dynamicAllocation.enabled": "true",
                   "spark.dynamicAllocation.executorAllocationRatio": "1"
               }
@@ -53,9 +52,6 @@
           "type": "STRING"
       },
       "s3DataBucket": {
-          "type": "STRING"
-      },
-      "containerImage": {
           "type": "STRING"
       },
       "az": {

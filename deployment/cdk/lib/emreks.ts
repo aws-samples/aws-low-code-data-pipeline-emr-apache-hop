@@ -11,9 +11,6 @@ import * as AppConfig from './resources/app-config.json';
 
 import { Bucket, IBucket } from 'aws-cdk-lib/aws-s3';
 
-interface EmkEksProps extends StackProps {
-   managedEndpointImageUri: {[key:string] :string}
-}
 
 interface appConfigProps {
    virtualClusterId: string,
@@ -28,7 +25,7 @@ interface appConfigProps {
 export class EmrEksStack extends Stack {
   private project:string; 
   
-  constructor(scope: Construct, id: string, props: EmkEksProps) {
+  constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
     
     const project = this.node.tryGetContext('cdk-project');
@@ -117,7 +114,7 @@ export class EmrEksStack extends Stack {
         });
         
         const configCfn = new CfnOutput(this,`${this.project}-${endpointName}-submitJobTemplate`,{ 
-          value: `aws emr-containers start-job-run --virtual-cluster-id=${virtualCluster.attrId} --job-template-id=${jobTemplate.ref} --job-template-parameters '{"executionRoleArn":"${role.roleArn}","emrReleaseLabel":"${jobConfig["emr-version"]}","s3DataBucket":"${s3Bucket.bucketName}","containerImage":"${props.managedEndpointImageUri[jobConfig["docker-file"]]}", "az":"${Aws.REGION}a"}'`
+          value: `aws emr-containers start-job-run --virtual-cluster-id=${virtualCluster.attrId} --job-template-id=${jobTemplate.ref} --job-template-parameters '{"executionRoleArn":"${role.roleArn}","emrReleaseLabel":"${jobConfig["emr-version"]}","s3DataBucket":"${s3Bucket.bucketName}","az":"${Aws.REGION}a"}'`
         });
         const roleCfn = new CfnOutput(this,`${this.project}-${endpointName}-execIamRoleArn`,{ value: role.roleArn});
         
