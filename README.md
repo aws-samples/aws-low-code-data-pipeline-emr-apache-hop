@@ -5,6 +5,8 @@ or export them as Apache Beam pipelines.
 There're several options to run Apache Beam pipelines on AWS platform using either Apache Spark or Apache Flink. This quickstart provides CDK deployment to provision EMR on EKS cluster 
 with custom Java11 docker image to run the latest version of Apache Hop using Apache Spark runner for Apache Beam. 
 
+This branch `emr-java11` will use java11 EMR image. If you want to use this stack using custom image please use `main` branch and customise the Dockerfile. 
+
 ## Installation
 
 We highly recommend spinning up AWS Cloud9 instance to deploy the pipeline as it already has docker and the necessary CDK libraries installed. 
@@ -27,6 +29,9 @@ have to change a few parameters before deploying it in your environment.
 as a master role in EKS. 
    
 * [Optional] Change `project=hop.job-config[0].iam-policy` IAM policy to configure access to data and other AWS services your Hop pipelines needs to be able to connect to. Existing default policy only grants access to automcatically created S3 bucket (see `hop-s3Bucket` output variable in cloudformation template)
+
+* [Optional] Change `project=hop.job-config[0].emr-version` to specify the EMR version. It must be java11-compatible build which EMR supports starting from `emr-6.10.0-java11-latest` . 
+
 
 2. [Optional] Review and change `docker/Dockerfile` to include any additional python packages required for your workload. 
 
@@ -64,7 +69,7 @@ aws emr-containers start-job-run --virtual-cluster-id=<POPULATED_BY_CFN> --job-t
 
 ``` 
 
-6. To monitor your jobs open EMR service page, then go to EMR on EKS Virtual clusters and select your cluster to view the spark jobs and get access to the SparkUI 
+6. To monitor your jobs open EMR service page, then go to EMR on EKS Virtual clusters and select your cluster to view the spark jobs and get access to the SparkUI.
 
 
 ## Links
