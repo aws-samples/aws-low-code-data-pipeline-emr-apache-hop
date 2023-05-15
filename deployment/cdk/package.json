@@ -21,9 +21,9 @@
     "cdk-nag":"~2.0.0"
   },
   "dependencies": {
-    "aws-analytics-reference-architecture": "~2.7.0",
-    "aws-cdk-lib": "2.51.0",
-    "@aws-cdk/lambda-layer-kubectl-v23":"^2.0.0",
+    "aws-analytics-reference-architecture": "2.10.1",
+    "aws-cdk-lib": "2.72.1",
+    "@aws-cdk/lambda-layer-kubectl-v24":"^2.0.0",
     "constructs": "^10.0.0",
     "source-map-support": "^0.5.21"
   }

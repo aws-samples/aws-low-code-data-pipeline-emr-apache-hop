@@ -5,7 +5,7 @@ import { NodegroupAmiType, TaintEffect, CapacityType, KubernetesVersion } from '
 import { InstanceType, SubnetType } from 'aws-cdk-lib/aws-ec2';
 import { ManagedPolicy, PolicyDocument, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 import { Stack, ArnFormat, Aws,StackProps, CfnOutput } from 'aws-cdk-lib';
-import { KubectlV23Layer } from '@aws-cdk/lambda-layer-kubectl-v23'; 
+import { KubectlV24Layer } from '@aws-cdk/lambda-layer-kubectl-v24'; 
 import { HopResourcesNestedStack } from './hopresources';
 import * as AppConfig from './resources/app-config.json';
 
@@ -32,15 +32,15 @@ export class EmrEksStack extends Stack {
     super(scope, id, props);
     
     const project = this.node.tryGetContext('cdk-project');
-    this.project = project;
+    this.project = `project-${props.env?.region}`;
     const projectSettings = this.node.tryGetContext(`project=${project}`);
     
     const clusterName = `${this.project}-cluster`;
-    const emrClusterName = `${this.project}emrcluster`; 
+    const emrClusterName = `${this.project}emrcluster`.replace(/[^a-z0-9]+/g,''); 
   
     
     // prepare S3bucket and copy data
-    const hopresources = new HopResourcesNestedStack(this,`${project}-HopResourcesStack`);
+    const hopresources = new HopResourcesNestedStack(this,`${this.project}-HopResourcesStack`);
     
     //S3 Bucket for Data
     const s3Bucket = hopresources.s3Bucket;  
@@ -51,8 +51,8 @@ export class EmrEksStack extends Stack {
       eksClusterName: clusterName, 
       defaultNodes: false,
       autoscaling: Autoscaler.KARPENTER,
-      kubernetesVersion:KubernetesVersion.V1_23,
-      kubectlLambdaLayer : new KubectlV23Layer(this, 'KubectlLayer')
+      kubernetesVersion:KubernetesVersion.V1_24,
+      kubectlLambdaLayer : new KubectlV24Layer(this, 'KubectlLayer')
     });
     
     
