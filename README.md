@@ -2,8 +2,11 @@
 
 Apache Hop is a data orchestration and data engineering platform that allows you to create data pipelines visually and run them either using native Hop execution engine 
 or export them as Apache Beam pipelines.
+
 There're several options to run Apache Beam pipelines on AWS platform using either Apache Spark or Apache Flink. This quickstart provides CDK deployment to provision EMR on EKS cluster 
 with custom Java11 docker image to run the latest version of Apache Hop using Apache Spark runner for Apache Beam. 
+
+##### If you want to use built-in EMR java11 image please use `emr-java11` branch. Use this branch only if you need to build a custom docker image. 
 
 ## Installation
 
